@@ -1,0 +1,400 @@
+EXPERIMENT NO - 1
+4 BIT ALU 
+
+RTL CODE
+----------------------------------------------------------------------------------
+
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.STD_LOGIC_UNSIGNED.ALL;
+
+-- Uncomment the following library declaration if using
+-- arithmetic functions with Signed or Unsigned values
+--use IEEE.NUMERIC_STD.ALL;
+
+-- Uncomment the following library declaration if instantiating
+-- any Xilinx leaf cells in this code.
+--library UNISIM;
+--use UNISIM.VComponents.all;
+
+entity ALU_4BITT is
+	Port ( a : in STD_LOGIC_VECTOR (3 downto 0);
+       	b : in STD_LOGIC_VECTOR (3 downto 0);
+       	cin : in STD_LOGIC;
+       	sel : in STD_LOGIC_VECTOR (3 downto 0);
+       	y : out STD_LOGIC_VECTOR (3 downto 0));
+end ALU_4BITT;
+
+architecture Behavioral of ALU_4BITT is
+
+begin
+y<= a when sel="0000" ELSE
+	a+1 when sel="0001" ELSE
+	a-1 when sel="0010" ELSE
+	b when sel="0011" ELSE
+	b+1 when sel="0100" ELSE
+	b-1 when sel="0101" ELSE
+	a+b when sel="0110" ELSE
+	a+b+cin when sel="0111" ELSE
+	NOT a when sel="1000" ELSE
+	NOT b when sel="1001" ELSE
+	a AND b when sel="1010" ELSE
+	a OR b when sel="1011" ELSE
+	a NAND b when sel="1100" ELSE
+	a NOR b when sel= "1101" ELSE
+	a XOR b when sel= "1110" ELSE
+	a XNOR b ;
+
+end Behavioral;
+
+
+
+
+
+TEST BENCH CODE
+----------------------------------------------------------------------------------
+
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.STD_LOGIC_UNSIGNED.ALL;
+-- Uncomment the following library declaration if using
+-- arithmetic functions with Signed or Unsigned values
+--use IEEE.NUMERIC_STD.ALL;
+
+-- Uncomment the following library declaration if instantiating
+-- any Xilinx leaf cells in this code.
+--library UNISIM;
+--use UNISIM.VComponents.all;
+
+entity alu_tb is
+--  Port ( );
+end alu_tb;
+
+architecture Behavioral of alu_tb is
+
+component ALU_4BITT is
+  	Port ( a : in STD_LOGIC_VECTOR (3 downto 0);
+       	b : in STD_LOGIC_VECTOR (3 downto 0);
+       	cin : in STD_LOGIC;
+       	sel : in STD_LOGIC_VECTOR (3 downto 0);
+       	y : out STD_LOGIC_VECTOR (3 downto 0));
+end component;
+signal a,b:std_logic_vector(3 downto 0);
+signal sel:std_logic_vector(3 downto 0):="0000";
+signal y:std_logic_vector(3 downto 0);
+signal cin:std_logic;
+
+
+begin
+	u1 :ALU_4BITT port map (a,b,cin,sel,y);
+	a <= "1010";
+	b <= "0111";
+	cin <= '0' , '1' after 200ns;
+process
+begin
+	wait for 200 ns;
+	sel<= sel+'1';
+end process;
+end Behavioral;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+EXPERIMENT NO - 2
+
+4 BIT COUNTER 
+
+RTL CODE
+----------------------------------------------------------------------------------
+
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use ieee.std_logic_unsigned.all;
+
+-- Uncomment the following library declaration if using
+-- arithmetic functions with Signed or Unsigned values
+--use IEEE.NUMERIC_STD.ALL;
+
+-- Uncomment the following library declaration if instantiating
+-- any Xilinx leaf cells in this code.
+--library UNISIM;
+--use UNISIM.VComponents.all;
+
+entity counter_4 is
+	Port ( clk : in STD_LOGIC;
+       	rst : in STD_LOGIC;
+       	Q : out STD_LOGIC_VECTOR (3 downto 0);
+       	clk_div : inout STD_LOGIC);
+end counter_4;
+
+architecture Behavioral of counter_4 is
+signal count: std_logic_vector(25 downto 0) := (others => '0');
+begin
+process(rst,clk_div)
+variable temp: std_logic_vector(3 downto 0) := "0000";
+begin
+if rst='1' then
+temp := "0000";
+elsif(clk_div'event and clk_div='1') then
+temp := temp + '1';
+end if;
+Q<=temp;
+end process;
+
+process(clk)
+begin
+if(clk'event and clk='1') then
+count<=count + '1';
+end if;
+end process;
+clk_div<=count(25);
+
+
+end Behavioral;
+
+
+TEST BENCH CODE
+----------------------------------------------------------------------------------
+
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use ieee.std_logic_unsigned.all;
+
+-- Uncomment the following library declaration if using
+-- arithmetic functions with Signed or Unsigned values
+--use IEEE.NUMERIC_STD.ALL;
+
+-- Uncomment the following library declaration if instantiating
+-- any Xilinx leaf cells in this code.
+--library UNISIM;
+--use UNISIM.VComponents.all;
+
+entity counter_4_tb is
+end counter_4_tb;
+
+architecture Behavioral of counter_4_tb is
+component counter_4 is
+  Port ( clk : in STD_LOGIC;
+     	rst : in STD_LOGIC;
+     	Q : out STD_LOGIC_VECTOR (3 downto 0);
+     	clk_div : inout STD_LOGIC);
+   end component;
+	signal rst,clk,clk_div: std_logic := '0';
+	signal Q: std_logic_vector(3 downto 0);
+begin
+U1: counter_4 port map(clk, rst, Q, clk_div);
+rst <='1', '0' after 100ns;
+clk <= not(clk) after 50ns;
+
+end Behavioral;
+
+
+
+
+
+FIFO RTL
+
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.STD_LOGIC_UNSIGNED.ALL;
+
+-- Uncomment the following library declaration if using
+-- arithmetic functions with Signed or Unsigned values
+--use IEEE.NUMERIC_STD.ALL;
+
+-- Uncomment the following library declaration if instantiating
+-- any Xilinx leaf cells in this code.
+--library UNISIM;
+--use UNISIM.VComponents.all;
+
+entity fifoo is
+GENERIC
+(
+ADDRESS_WIDTH:integer:=2;
+DATA_WIDTH:integer:=4
+);
+	Port ( clk : in STD_LOGIC;
+      	clk_div : inout STD_LOGIC;
+       	reset : in STD_LOGIC;
+       	enr : in STD_LOGIC;
+       	enw : in STD_LOGIC;
+       	dataout : out STD_LOGIC_VECTOR (DATA_WIDTH-1 downto 0);
+       	datain : in STD_LOGIC_VECTOR (DATA_WIDTH-1 downto 0);
+       	empty : out STD_LOGIC;
+       	error : out STD_LOGIC;
+       	full : out STD_LOGIC);
+end fifoo;
+
+architecture Behavioral of fifoo is
+type memory_type is array(0 to ((2**ADDRESS_WIDTH)-1)) of STD_LOGIC_VECTOR(DATA_WIDTH-1 downto 0);
+signal memory:memory_type;
+signal readptr,writeptr: STD_LOGIC_VECTOR(ADDRESS_WIDTH-1 downto 0):="00";
+signal full0:STD_LOGIC:='0';
+signal empty0:STD_LOGIC:='1';
+signal counter:STD_LOGIC_VECTOR(30 downto 0):=(others=>'0');
+--signal clk_div:STD_LOGIC:='0';
+
+begin
+full<=full0;
+empty<=empty0;
+fifo0:process(clk_div,reset,datain,enw,enr)
+
+begin
+if reset='1'then
+
+ readptr<=(others=>'0');
+ writeptr<=(others=>'0');
+ empty0<='1';
+ full0<='0';
+ error<='0';
+
+elsif clk_div'event and clk_div='1' then
+if enw='1' and full0='0' then
+ memory (conv_integer(writeptr))<=datain;
+ writeptr<=writeptr+'1';
+ if(writeptr+'1'=readptr) then
+ full0<='1';
+ empty0<='0';
+else
+ full0<='0';
+ empty<='1';
+end if;
+end if;
+end if;
+
+if enr='1' and empty0='0' then
+dataout<=memory(conv_integer(readptr));
+readptr<=readptr+'1';
+	if(readptr+'1'=writeptr) then
+	full0<='0';
+	empty0<='1';
+	else
+	full0<='1';
+	empty0<='0';
+	end if;
+	end if;
+    
+if(empty0='1' and enr='1') or (full0='1' and enw='1') then
+error<='1';
+else
+error<='0';
+end if;
+
+end process;
+
+process(clk)
+begin
+if(clk'EVENT and clk='1') then
+counter<=counter+1;
+end if;
+end process;
+clk_div<=counter(0);
+end Behavioral;
+
+
+
+FIFO TB
+
+
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.STD_LOGIC_UNSIGNED.ALL;
+
+-- Uncomment the following library declaration if using
+-- arithmetic functions with Signed or Unsigned values
+--use IEEE.NUMERIC_STD.ALL;
+
+-- Uncomment the following library declaration if instantiating
+-- any Xilinx leaf cells in this code.
+--library UNISIM;
+--use UNISIM.VComponents.all;
+
+entity fifoo_test is
+-- PORT();
+   
+end fifoo_test;
+
+architecture Behavioral of fifoo_test is
+component fifoo is
+GENERIC
+(
+ADDRESS_WIDTH:integer:=2;
+DATA_WIDTH:integer:=4
+);
+
+ Port ( clk : in STD_LOGIC;
+      	-- clk_div : inout STD_LOGIC;
+       	reset : in STD_LOGIC;
+       	enr : in STD_LOGIC;
+       	enw : in STD_LOGIC;
+       	dataout : out STD_LOGIC_VECTOR (3 downto 0);
+       	datain : in STD_LOGIC_VECTOR (3 downto 0);
+       	empty : out STD_LOGIC;
+       	error : out STD_LOGIC;
+       	full : out STD_LOGIC);
+end component;
+
+signal clk:STD_LOGIC:='0';
+signal reset:STD_LOGIC;
+signal enr:STD_LOGIC;
+signal enw:STD_LOGIC;
+signal dataout:STD_LOGIC_VECTOR(3 downto 0);
+signal datain:STD_LOGIC_VECTOR(3 downto 0);
+signal empty:STD_LOGIC;
+signal error:STD_LOGIC;
+signal full:STD_LOGIC;
+begin
+U1: fifoo port map(clk,reset,enr,enw,dataout,datain,empty,error,full);
+process
+begin
+clk<='1';
+wait for 20 ns;
+clk<='0';
+wait for 20 ns;
+end process;
+
+process
+begin
+reset<='1';
+wait for 20 ns;
+reset<='0';
+datain<="1010";
+enw<='1';
+enr<='0';
+wait for 200 ns;
+enw<='0';
+enr<='1';
+wait for 200 ns;
+end process;
+end Behavioral;
+
