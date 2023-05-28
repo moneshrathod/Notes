@@ -1,0 +1,175 @@
+/* blink */
+
+// the setup function runs once when you press reset or power the board
+void setup() {
+  // initialize digital pin LED_BUILTIN as an output.
+  pinMode(LED_BUILTIN, OUTPUT);
+}
+
+// the loop function runs over and over again forever
+void loop() {
+  digitalWrite(LED_BUILTIN, HIGH);  // turn the LED on (HIGH is the voltage level)
+  delay(1000);                      // wait for a second
+  digitalWrite(LED_BUILTIN, LOW);   // turn the LED off by making the voltage LOW
+  delay(1000);                      // wait for a second
+}
+
+
+/* push button*/
+
+********exp-2
+
+const int ledPin = LED_BUILTIN;      // Built-in LED pin
+const int buttonPin = PC13;          // Built-in push button pin (example pin number for Nucleo-64 boards)
+
+int buttonState = 0;
+int ledState = LOW;
+int previousButtonState = HIGH;
+long lastDebounceTime = 0;
+long debounceDelay = 50;
+
+void setup() {
+  pinMode(ledPin, OUTPUT);      // Set LED pin as output
+  pinMode(buttonPin, INPUT);    // Set button pin as input
+  digitalWrite(ledPin, ledState);   // Initialize LED state
+}
+
+void loop() {
+  int reading = digitalRead(buttonPin);   // Read the button state
+
+  if (reading != previousButtonState) {
+    lastDebounceTime = millis();   // Update the debounce time
+  }
+
+  if ((millis() - lastDebounceTime) > debounceDelay) {
+    if (reading != buttonState) {
+      buttonState = reading;
+
+      if (buttonState == LOW) {
+        ledState = !ledState;    // Toggle the LED state
+        digitalWrite(ledPin, ledState);   // Update the LED state
+      }
+    }
+  }
+
+  previousButtonState = reading;
+}
+
+//Ultrasonic 
+
+int trigPin = 9; // TRIG pin
+int echoPin = 8; // ECHO pin
+float duration_us, distance_cm;
+void setup() {
+ // begin serial port
+ Serial.begin (9600);
+ // configure the trigger pin to output mode
+ pinMode(trigPin, OUTPUT);
+ // configure the echo pin to input mode
+ pinMode(echoPin, INPUT);
+}
+void loop() {
+ // generate 10-microsecond pulse to TRIG pin
+ digitalWrite(trigPin, HIGH);
+ delayMicroseconds(10);
+ digitalWrite(trigPin, LOW);
+
+// measure duration of pulse from ECHO pin
+ duration_us = pulseIn(echoPin, HIGH);
+ // calculate the distance
+ distance_cm = 0.017 * duration_us;
+ // print the value to Serial Monitor
+ Serial.print("distance: ");
+ Serial.print(distance_cm);
+ Serial.println(" cm");
+ delay(500);
+}
+
+
+
+//DHT11
+
+
+/*vcc to 3v of stm
+data to a1 of stm
+gnd to gnd of stm*/
+//https://youtu.be/09C1dyXvSbg
+
+/DHT11 Sensor with Arduino/
+#include <Adafruit_Sensor.h>
+#include <DHT.h>
+#include <DHT_U.h>
+#define DHTPIN 2 // Pin connected to the DHT11 sensor
+#define DHTTYPE DHT11 // DHT11 sensor type
+DHT dht(DHTPIN, DHTTYPE);
+void setup() {
+ Serial.begin(9600);
+ dht.begin();
+}
+void loop() {
+ delay(2000); // Wait for 2 seconds between readings
+ float temperature = dht.readTemperature(); // Read temperature in Celsius
+ float humidity = dht.readHumidity();   //read humidity
+
+if (isnan(temperature) || isnan(humidity)) {
+ Serial.println("Failed to read from DHT sensor!");
+ return;
+ }
+ Serial.print("Temperature: ");
+ Serial.print(temperature);
+ Serial.print(" °C");
+ Serial.print(" Humidity: ");
+ Serial.print(humidity);
+ Serial.println(" %");
+}
+
+//txrx 
+
+void setup() {
+Serial.begin(9600);
+}
+void loop() {
+if(Serial.available()){
+String str = Serial.readStringUntil('\n'); 
+str.trim();
+if(str == "HI"){
+Serial.println("Hello");
+}
+else{
+Serial.println("No Match Found!");
+}
+}
+}
+
+
+/*txrx my*/
+
+void setup() {
+  Serial.begin(9600); // Initialize serial communication
+}
+
+void loop() {
+  Serial.println("Hello Harsh"); // Print "Hello" to the serial terminal
+  delay(1000); // Delay for 1 seco
+}
+
+
+/* audio sensor*/
+
+#include
+<f401reMap.h>
+int a=pinMap(32);
+void Setup()
+	{
+	       float mic_val;
+	       Serial.begin(115200);
+	}
+	void loop()
+	{
+	       if(Serial.available())
+	       {
+	              mic_val=analogRead(a);
+	              Serial.println(“ The Converted Sample is   ”);
+	              Serial.print(mic_val);
+	       }
+	}
